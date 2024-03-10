@@ -3,5 +3,4 @@ others
 - lose screen
 
 bonus
-- enemies repel each other
 - item entity

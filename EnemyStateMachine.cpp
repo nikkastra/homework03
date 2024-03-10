@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <string>
+#include <iostream>
 
 #include "enemy.hpp"
 #include "player.hpp"
@@ -43,6 +44,12 @@ void Enemy::HandleCollision(Player* player){
         if(current_state != &wandering){
             SetState(&wandering);
         }
+    }
+}
+
+void Enemy::HandleEnemyCollision(Enemy* enemy){
+    if((attackRange + enemy->attackRange > Vector2Distance(bodyCenter, enemy->bodyCenter)) && (current_state != &readyingAttack || current_state != &attacking)){
+        velocity = Vector2Scale(Vector2Normalize(Vector2Subtract(bodyCenter, enemy->bodyCenter)), speed);
     }
 }
 

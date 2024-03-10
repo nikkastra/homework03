@@ -59,6 +59,7 @@ public:
 
     float timer;
     float invulnerabilityTimer;
+    float powerUpTimer;
     int HP;
     bool damaged;
 

@@ -62,6 +62,8 @@ public:
     float aggroRange;
     float attackRange;
 
+    bool nearOtherEnemy;
+
     float timer;
     int HP;
     bool damaged;
@@ -84,6 +86,8 @@ public:
     void SetState(EnemyState* new_state);
 
     void HandleCollision(Player* player);
+
+    void HandleEnemyCollision(Enemy* enemy);
 
 private:
     EnemyState* current_state;

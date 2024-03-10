@@ -35,11 +35,13 @@ int main(){
             player.HandleCollision(&enemy1);
             enemy1.Update(delta_time);
             enemy1.HandleCollision(&player);
+            enemy2.HandleEnemyCollision(&enemy1);
         }
         if(enemy2.HP > 0){
             player.HandleCollision(&enemy2);
             enemy2.Update(delta_time);
             enemy2.HandleCollision(&player);
+            enemy1.HandleEnemyCollision(&enemy2);
         }
 
         BeginDrawing();
