@@ -58,8 +58,9 @@ public:
     float speed;
 
     float timer;
+    float invulnerabilityTimer;
     int HP;
-    bool isColliding;
+    bool damaged;
 
     PlayerIdle idle;
     PlayerMoving moving;

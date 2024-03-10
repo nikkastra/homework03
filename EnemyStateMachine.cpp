@@ -51,6 +51,7 @@ Enemy::Enemy(Vector2 pos, float sz, float spd, int hp){
     detectionRange = 2*sz + 50;
     attackRange = sz + 50;
     damaged = false;
+    damage = 2;
 }
 
 void EnemyWandering::Enter(Enemy& enemy){

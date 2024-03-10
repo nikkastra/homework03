@@ -6,6 +6,13 @@
 #include "Player.hpp"
 
 void Player::Update(float delta_time){
+    if(damaged){
+        invulnerabilityTimer += delta_time;
+        if(invulnerabilityTimer > 2.0f){
+            damaged = false;
+            invulnerabilityTimer = 0;
+        }
+    }
     current_state->Update(*this, delta_time);
 }
 
@@ -22,24 +29,23 @@ void Player::SetState(PlayerState* new_state){
 }
 
 void Player::HandleCollision(Enemy* enemy){
+    Vector2 q;
+
     if(current_state == &attacking){
-        Vector2 q;
-        float leastDistance = 99999999999999999999.0f;
-        if(Vector2Distance(hitboxPos, enemy->position) < leastDistance){
-            leastDistance = Vector2Distance(hitboxPos, enemy->position);
-            q = enemy->position;
+        if(hitboxPos.x < enemy->position.x){
+            q.x = enemy->position.x;
+        } else if (hitboxPos.x > enemy->position.x + enemy->size){
+            q.x = enemy->position.x + enemy->size;
+        } else {
+            q.x = hitboxPos.x;
         }
-        if(Vector2Distance(hitboxPos, {enemy->position.x + enemy->size, enemy->position.y}) < leastDistance){
-            leastDistance = Vector2Distance(hitboxPos, {enemy->position.x + enemy->size, enemy->position.y});
-            q = {enemy->position.x + enemy->size, enemy->position.y};
-        }
-        if(Vector2Distance(hitboxPos, {enemy->position.x, enemy->position.y + enemy->size}) < leastDistance){
-            leastDistance = Vector2Distance(hitboxPos, {enemy->position.x, enemy->position.y + enemy->size});
-            q = {enemy->position.x, enemy->position.y + enemy->size};
-        }
-        if(Vector2Distance(hitboxPos, {enemy->position.x + enemy->size, enemy->position.y + enemy->size}) < leastDistance){
-            leastDistance = Vector2Distance(hitboxPos, {enemy->position.x + enemy->size, enemy->position.y + enemy->size});
-            q = {enemy->position.x + enemy->size, enemy->position.y + enemy->size};
+
+        if(hitboxPos.y < enemy->position.y){
+            q.y = enemy->position.y;
+        } else if (hitboxPos.y > enemy->position.y + enemy->size){
+            q.y = enemy->position.y + enemy->size;
+        } else {
+            q.y = hitboxPos.y;
         }
 
         if(Vector2Distance(hitboxPos, q) <= radius && !enemy->damaged){
@@ -48,6 +54,33 @@ void Player::HandleCollision(Enemy* enemy){
         }
     } else {
         enemy->damaged = false;
+
+        if(position.x < enemy->position.x){
+            q.x = enemy->position.x;
+        } else if (position.x > enemy->position.x + enemy->size/2){
+            q.x = enemy->position.x + enemy->size/2;
+        } else {
+            q.x = position.x;
+        }
+
+        if(position.y < enemy->position.y){
+            q.y = enemy->position.y;
+        } else if (position.y > enemy->position.y + enemy->size/2){
+            q.y = enemy->position.y + enemy->size/2;
+        } else {
+            q.y = position.y;
+        }
+
+        if(Vector2Distance(position, q) <= radius && !damaged){
+            if(current_state == &dodging){
+                HP -= 0;
+            } else if (current_state == &blocking){
+                HP -= (int) enemy->damage/2;
+            } else {
+                HP -= (int) enemy->damage;
+            }
+            damaged = true;
+        }
     }
 }
 
@@ -57,9 +90,11 @@ Player::Player(Vector2 pos, float rad, float spd, int hp){
     speed = spd;
     SetState(&idle);
     timer = 0;
+    invulnerabilityTimer = 0;
     HP = hp;
     hitboxPos = {pos.x + rad +25.0f, pos.y};
     hitboxRad = rad/2;
+    damaged = false;
 }
 
 void PlayerIdle::Enter(Player& player){

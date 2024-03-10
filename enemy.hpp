@@ -68,6 +68,7 @@ public:
 
     //target player
     Vector2 targetPos;
+    float damage;
 
     EnemyWandering wandering;
     EnemyChasing chasing;
