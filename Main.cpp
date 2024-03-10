@@ -31,13 +31,16 @@ int main(){
         camera_view.target = player.position;
 
         player.Update(delta_time);
-        player.HandleCollision(&enemy1);
-        player.HandleCollision(&enemy2);
-
-        enemy1.Update(delta_time);
-        enemy2.Update(delta_time);
-        enemy1.HandleCollision(&player);
-        enemy2.HandleCollision(&player);
+        if(enemy1.HP > 0){
+            player.HandleCollision(&enemy1);
+            enemy1.Update(delta_time);
+            enemy1.HandleCollision(&player);
+        }
+        if(enemy2.HP > 0){
+            player.HandleCollision(&enemy2);
+            enemy2.Update(delta_time);
+            enemy2.HandleCollision(&player);
+        }
 
         BeginDrawing();
         ClearBackground(WHITE);

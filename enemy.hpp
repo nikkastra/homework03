@@ -72,6 +72,8 @@ public:
 
     EnemyWandering wandering;
     EnemyChasing chasing;
+    EnemyReadyingAttack readyingAttack;
+    EnemyAttacking attacking;
 
     Enemy(Vector2 pos, float sz, float spd, int hp);
 

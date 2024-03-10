@@ -1,7 +1,3 @@
-enemy:
-- readying attack state
-- attacking state
-
 others
 - win screen
 - lose screen

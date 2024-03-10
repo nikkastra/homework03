@@ -29,9 +29,16 @@ void Enemy::SetState(EnemyState* new_state){
 }
 
 void Enemy::HandleCollision(Player* player){
-    if(detectionRange + player->radius > Vector2Distance(bodyCenter, player->position)){
-        targetPos = player->position;
+    targetPos = player->position;
+    if(current_state == &readyingAttack || current_state == &attacking){
+        return;
+    }
+    if(attackRange + player->radius > Vector2Distance(bodyCenter, player->position)){
+        SetState(&readyingAttack);
+    } else if(detectionRange + player->radius > Vector2Distance(bodyCenter, player->position)){
         SetState(&chasing);
+    } else if((detectionRange + player->radius < Vector2Distance(bodyCenter, player->position) && (aggroRange + player->radius > Vector2Distance(bodyCenter, player->position)))){
+        if(current_state == &chasing) SetState(&chasing);
     } else if (aggroRange + player->radius < Vector2Distance(bodyCenter, player->position)) {
         if(current_state != &wandering){
             SetState(&wandering);
@@ -77,4 +84,31 @@ void EnemyChasing::Enter(Enemy& enemy){
 void EnemyChasing::Update(Enemy& enemy, float delta_time){
     enemy.position = Vector2Add(enemy.position, Vector2Scale(enemy.velocity, delta_time));
     enemy.bodyCenter = Vector2Add(enemy.bodyCenter, Vector2Scale(enemy.velocity, delta_time));
+}
+
+void EnemyReadyingAttack::Enter(Enemy& enemy){
+    enemy.color = MAROON;
+}
+
+void EnemyReadyingAttack::Update(Enemy& enemy, float delta_time){
+    enemy.velocity = Vector2Scale(Vector2Normalize(Vector2Subtract(enemy.targetPos, enemy.bodyCenter)), enemy.speed);
+    enemy.timer += delta_time;
+    if(enemy.timer > 1){
+        enemy.timer = 0;
+        enemy.SetState(&enemy.attacking);
+    }
+}
+
+void EnemyAttacking::Enter(Enemy& enemy){
+    enemy.color = MAGENTA;
+}
+
+void EnemyAttacking::Update(Enemy& enemy, float delta_time){
+    enemy.position = Vector2Add(enemy.position, Vector2Scale(Vector2Scale(enemy.velocity, delta_time), 10.0f));
+    enemy.bodyCenter = Vector2Add(enemy.bodyCenter, Vector2Scale(Vector2Scale(enemy.velocity, delta_time), 10.0f));
+    enemy.timer += delta_time;
+    if(enemy.timer > 0.5){
+        enemy.timer = 0;
+        enemy.SetState(&enemy.wandering);
+    }
 }
