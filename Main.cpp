@@ -12,8 +12,8 @@ const float FPS = 60;
 
 int main(){
     Player player({WINDOW_WIDTH/2, WINDOW_HEIGHT/2}, 50.0f, 200.0f, 5);
-    Enemy enemy1({WINDOW_WIDTH/8, WINDOW_HEIGHT/8}, 100.0f, 100.0f, 5);
-    Enemy enemy2({7*WINDOW_WIDTH/8, 7*WINDOW_HEIGHT/8}, 100.0f, 100.0f, 5);
+    Enemy enemy1({WINDOW_WIDTH/8, WINDOW_HEIGHT/8}, 100.0f, 100.0f, 2);
+    Enemy enemy2({7*WINDOW_WIDTH/8, 7*WINDOW_HEIGHT/8}, 100.0f, 100.0f, 2);
 
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "miss ko na siya");
     SetTargetFPS(FPS);
@@ -31,6 +31,9 @@ int main(){
         camera_view.target = player.position;
 
         player.Update(delta_time);
+        player.HandleCollision(&enemy1);
+        player.HandleCollision(&enemy2);
+
         enemy1.Update(delta_time);
         enemy2.Update(delta_time);
         enemy1.HandleCollision(&player);
@@ -40,8 +43,12 @@ int main(){
         ClearBackground(WHITE);
         BeginMode2D(camera_view);
         DrawTexture(joshHutcherson, 0, 0, WHITE);
-        enemy1.Draw();
-        enemy2.Draw();
+        if(enemy1.HP > 0){
+            enemy1.Draw();
+        }
+        if(enemy2.HP > 0){
+            enemy2.Draw();
+        }
         player.Draw();
         EndMode2D();
         char buffer[10];

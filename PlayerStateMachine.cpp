@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include <raymath.h>
 #include <string>
+#include <iostream>
 
 #include "Player.hpp"
 
@@ -10,6 +11,9 @@ void Player::Update(float delta_time){
 
 void Player::Draw(){
     DrawCircleV(position, radius, color);
+    if(current_state == &attacking){
+        DrawCircleV(hitboxPos, hitboxRad, color);
+    }
 }
 
 void Player::SetState(PlayerState* new_state){
@@ -17,9 +21,35 @@ void Player::SetState(PlayerState* new_state){
     current_state->Enter(*this);
 }
 
-// bool Player::HandleCollision(Enemy* enemy){
-//     return true;
-// }
+void Player::HandleCollision(Enemy* enemy){
+    if(current_state == &attacking){
+        Vector2 q;
+        float leastDistance = 99999999999999999999.0f;
+        if(Vector2Distance(hitboxPos, enemy->position) < leastDistance){
+            leastDistance = Vector2Distance(hitboxPos, enemy->position);
+            q = enemy->position;
+        }
+        if(Vector2Distance(hitboxPos, {enemy->position.x + enemy->size, enemy->position.y}) < leastDistance){
+            leastDistance = Vector2Distance(hitboxPos, {enemy->position.x + enemy->size, enemy->position.y});
+            q = {enemy->position.x + enemy->size, enemy->position.y};
+        }
+        if(Vector2Distance(hitboxPos, {enemy->position.x, enemy->position.y + enemy->size}) < leastDistance){
+            leastDistance = Vector2Distance(hitboxPos, {enemy->position.x, enemy->position.y + enemy->size});
+            q = {enemy->position.x, enemy->position.y + enemy->size};
+        }
+        if(Vector2Distance(hitboxPos, {enemy->position.x + enemy->size, enemy->position.y + enemy->size}) < leastDistance){
+            leastDistance = Vector2Distance(hitboxPos, {enemy->position.x + enemy->size, enemy->position.y + enemy->size});
+            q = {enemy->position.x + enemy->size, enemy->position.y + enemy->size};
+        }
+
+        if(Vector2Distance(hitboxPos, q) <= radius && !enemy->damaged){
+            enemy->HP -= 1;
+            enemy->damaged = true;
+        }
+    } else {
+        enemy->damaged = false;
+    }
+}
 
 Player::Player(Vector2 pos, float rad, float spd, int hp){
     position = pos;
@@ -28,6 +58,8 @@ Player::Player(Vector2 pos, float rad, float spd, int hp){
     SetState(&idle);
     timer = 0;
     HP = hp;
+    hitboxPos = {pos.x + rad +25.0f, pos.y};
+    hitboxRad = rad/2;
 }
 
 void PlayerIdle::Enter(Player& player){
@@ -43,7 +75,7 @@ void PlayerDodging::Enter(Player& player){
 }
 
 void PlayerAttacking::Enter(Player& player){
-    player.color = RED;
+    player.color = BROWN;
 }
 
 void PlayerBlocking::Enter(Player& player){
@@ -87,6 +119,8 @@ void PlayerMoving::Update(Player& player, float delta_time){
 
     if(Vector2Length(player.velocity) == 0) {
         player.SetState(&player.idle);
+    } else {
+        player.hitboxPos = {player.position.x + player.velocity.x/player.speed*(player.radius + 25.0f), player.position.y + player.velocity.y/player.speed*(player.radius + 25.0f)};
     }
 }
 

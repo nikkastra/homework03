@@ -4,7 +4,7 @@
 #include <raylib.h>
 #include <raymath.h>
 
-#include "player.hpp"
+class Player;
 
 class Enemy;
 
@@ -47,6 +47,8 @@ public:
 
 class Enemy{
 public:
+    Player* player;
+
     Vector2 position;
     float size;
     Color color;
@@ -62,6 +64,7 @@ public:
 
     float timer;
     int HP;
+    bool damaged;
 
     //target player
     Vector2 targetPos;

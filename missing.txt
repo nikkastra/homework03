@@ -1,14 +1,9 @@
-player:
-- handle collision
-- melee attack in attack state
-
 enemy:
 - readying attack state
 - attacking state
 
 others
 - player gets damage when enemy overlaps with it
-- player damages enemy with attack hitbox
 - win screen
 - lose screen
 

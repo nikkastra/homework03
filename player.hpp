@@ -4,6 +4,8 @@
 #include <raylib.h>
 #include <raymath.h>
 
+#include "enemy.hpp"
+
 class Player;
 
 class PlayerState{
@@ -49,6 +51,9 @@ public:
     float radius;
     Color color;
 
+    Vector2 hitboxPos;
+    float hitboxRad;
+
     Vector2 velocity;
     float speed;
 
@@ -70,7 +75,7 @@ public:
 
     void SetState(PlayerState* new_state);
 
-    // bool HandleCollision(Enemy* enemy);
+    void HandleCollision(Enemy* enemy);
 
 private:
     PlayerState* current_state;
