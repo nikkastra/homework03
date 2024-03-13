@@ -4,6 +4,9 @@
 #include <iostream>
 
 #include "Player.hpp"
+#include "entity.hpp"
+
+class Entity;
 
 void Player::Update(float delta_time){
     if(damaged){
@@ -28,45 +31,45 @@ void Player::SetState(PlayerState* new_state){
     current_state->Enter(*this);
 }
 
-void Player::HandleCollision(Enemy* enemy){
+void Player::HandleCollision(Entity* entity){
     Vector2 q;
 
     if(current_state == &attacking){
-        if(hitboxPos.x < enemy->position.x){
-            q.x = enemy->position.x;
-        } else if (hitboxPos.x > enemy->position.x + enemy->size){
-            q.x = enemy->position.x + enemy->size;
+        if(hitboxPos.x < entity->position.x){
+            q.x = entity->position.x;
+        } else if (hitboxPos.x > entity->position.x + entity->size){
+            q.x = entity->position.x + entity->size;
         } else {
             q.x = hitboxPos.x;
         }
 
-        if(hitboxPos.y < enemy->position.y){
-            q.y = enemy->position.y;
-        } else if (hitboxPos.y > enemy->position.y + enemy->size){
-            q.y = enemy->position.y + enemy->size;
+        if(hitboxPos.y < entity->position.y){
+            q.y = entity->position.y;
+        } else if (hitboxPos.y > entity->position.y + entity->size){
+            q.y = entity->position.y + entity->size;
         } else {
             q.y = hitboxPos.y;
         }
 
-        if(Vector2Distance(hitboxPos, q) <= radius && !enemy->damaged){
-            enemy->HP -= 1;
-            enemy->damaged = true;
+        if(Vector2Distance(hitboxPos, q) <= radius && !entity->damaged){
+            entity->healthPoints -= 1;
+            entity->damaged = true;
         }
     } else {
-        enemy->damaged = false;
+        entity->damaged = false;
 
-        if(position.x < enemy->position.x){
-            q.x = enemy->position.x;
-        } else if (position.x > enemy->position.x + enemy->size/2){
-            q.x = enemy->position.x + enemy->size/2;
+        if(position.x < entity->position.x){
+            q.x = entity->position.x;
+        } else if (position.x > entity->position.x + entity->size/2){
+            q.x = entity->position.x + entity->size/2;
         } else {
             q.x = position.x;
         }
 
-        if(position.y < enemy->position.y){
-            q.y = enemy->position.y;
-        } else if (position.y > enemy->position.y + enemy->size/2){
-            q.y = enemy->position.y + enemy->size/2;
+        if(position.y < entity->position.y){
+            q.y = entity->position.y;
+        } else if (position.y > entity->position.y + entity->size/2){
+            q.y = entity->position.y + entity->size/2;
         } else {
             q.y = position.y;
         }
@@ -75,16 +78,16 @@ void Player::HandleCollision(Enemy* enemy){
             if(current_state == &dodging){
                 HP -= 0;
             } else if (current_state == &blocking){
-                HP -= (int) enemy->damage/2;
+                HP -= (int) entity->damage/2;
             } else {
-                HP -= (int) enemy->damage;
+                HP -= (int) entity->damage;
             }
             damaged = true;
         }
     }
 }
 
-Player::Player(Vector2 pos, float rad, float spd, int hp){
+Player::Player(Vector2 pos, float rad, float spd, int hp): Entity(position, radius, /*size */ 0.0f,speed, healthPoints){
     position = pos;
     radius = rad;
     speed = spd;
@@ -96,6 +99,7 @@ Player::Player(Vector2 pos, float rad, float spd, int hp){
     hitboxRad = rad/2;
     damaged = false;
 }
+
 
 void PlayerIdle::Enter(Player& player){
     player.color = PINK;

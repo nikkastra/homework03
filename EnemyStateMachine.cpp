@@ -4,7 +4,9 @@
 #include <iostream>
 
 #include "enemy.hpp"
-#include "player.hpp"
+#include "entity.hpp"
+
+class Entity;
 
 void Enemy::Update(float delta_time){
     current_state->Update(*this, delta_time);
@@ -29,18 +31,18 @@ void Enemy::SetState(EnemyState* new_state){
     current_state->Enter(*this);
 }
 
-void Enemy::HandleCollision(Player* player){
-    targetPos = player->position;
+void Enemy::HandleCollision(Entity* entity){
+    targetPos = entity->position;
     if(current_state == &readyingAttack || current_state == &attacking){
         return;
     }
-    if(attackRange + player->radius > Vector2Distance(bodyCenter, player->position)){
+    if(attackRange + entity->radius > Vector2Distance(bodyCenter, entity->position)){
         SetState(&readyingAttack);
-    } else if(detectionRange + player->radius > Vector2Distance(bodyCenter, player->position)){
+    } else if(detectionRange + entity->radius > Vector2Distance(bodyCenter, entity->position)){
         SetState(&chasing);
-    } else if((detectionRange + player->radius < Vector2Distance(bodyCenter, player->position) && (aggroRange + player->radius > Vector2Distance(bodyCenter, player->position)))){
+    } else if((detectionRange + entity->radius < Vector2Distance(bodyCenter, entity->position) && (aggroRange + entity->radius > Vector2Distance(bodyCenter, entity->position)))){
         if(current_state == &chasing) SetState(&chasing);
-    } else if (aggroRange + player->radius < Vector2Distance(bodyCenter, player->position)) {
+    } else if (aggroRange + entity->radius < Vector2Distance(bodyCenter, entity->position)) {
         if(current_state != &wandering){
             SetState(&wandering);
         }
@@ -53,7 +55,7 @@ void Enemy::HandleEnemyCollision(Enemy* enemy){
     }
 }
 
-Enemy::Enemy(Vector2 pos, float sz, float spd, int hp){
+Enemy::Enemy(Vector2 pos, float sz, float spd, int hp): Entity(position, /*radius */ 0.0f, sz ,speed, healthPoints){
     position = pos;
     size = sz;
     speed = spd;

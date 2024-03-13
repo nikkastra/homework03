@@ -4,7 +4,7 @@
 #include <raylib.h>
 #include <raymath.h>
 
-#include "enemy.hpp"
+#include "entity.hpp"
 
 class Player;
 
@@ -45,7 +45,7 @@ public:
     void Update(Player& player, float delta_time);
 };
 
-class Player{
+class Player : public Entity{
 public:
     Vector2 position;
     float radius;
@@ -77,7 +77,7 @@ public:
 
     void SetState(PlayerState* new_state);
 
-    void HandleCollision(Enemy* enemy);
+    void HandleCollision(Entity* entity);
 
 private:
     PlayerState* current_state;
