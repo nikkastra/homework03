@@ -9,10 +9,10 @@
 class Entity;
 
 void Player::Update(float delta_time){
-    if(damaged){
+    if(_damaged){
         invulnerabilityTimer += delta_time;
         if(invulnerabilityTimer > 2.0f){
-            damaged = false;
+            _damaged = false;
             invulnerabilityTimer = 0;
         }
     }
@@ -20,7 +20,7 @@ void Player::Update(float delta_time){
 }
 
 void Player::Draw(){
-    DrawCircleV(position, radius, color);
+    DrawCircleV(_position, _radius, color);
     if(current_state == &attacking){
         DrawCircleV(hitboxPos, hitboxRad, color);
     }
@@ -35,69 +35,71 @@ void Player::HandleCollision(Entity* entity){
     Vector2 q;
 
     if(current_state == &attacking){
-        if(hitboxPos.x < entity->position.x){
-            q.x = entity->position.x;
-        } else if (hitboxPos.x > entity->position.x + entity->size){
-            q.x = entity->position.x + entity->size;
+        if(hitboxPos.x < entity->_position.x){
+            q.x = entity->_position.x;
+        } else if (hitboxPos.x > entity->_position.x + entity->_size){
+            q.x = entity->_position.x + entity->_size;
         } else {
             q.x = hitboxPos.x;
         }
 
-        if(hitboxPos.y < entity->position.y){
-            q.y = entity->position.y;
-        } else if (hitboxPos.y > entity->position.y + entity->size){
-            q.y = entity->position.y + entity->size;
+        if(hitboxPos.y < entity->_position.y){
+            q.y = entity->_position.y;
+        } else if (hitboxPos.y > entity->_position.y + entity->_size){
+            q.y = entity->_position.y + entity->_size;
         } else {
             q.y = hitboxPos.y;
         }
 
-        if(Vector2Distance(hitboxPos, q) <= radius && !entity->damaged){
-            entity->healthPoints -= 1;
-            entity->damaged = true;
+        if(Vector2Distance(hitboxPos, q) <= _radius && !entity->_damaged){
+            entity->_healthPoints -= 1;
+            entity->_damaged = true;
         }
     } else {
-        entity->damaged = false;
+        entity->_damaged = false;
 
-        if(position.x < entity->position.x){
-            q.x = entity->position.x;
-        } else if (position.x > entity->position.x + entity->size/2){
-            q.x = entity->position.x + entity->size/2;
+        if(_position.x < entity->_position.x){
+            q.x = entity->_position.x;
+        } else if (_position.x > entity->_position.x + entity->_size/2){
+            q.x = entity->_position.x + entity->_size/2;
         } else {
-            q.x = position.x;
+            q.x = _position.x;
         }
 
-        if(position.y < entity->position.y){
-            q.y = entity->position.y;
-        } else if (position.y > entity->position.y + entity->size/2){
-            q.y = entity->position.y + entity->size/2;
+        if(_position.y < entity->_position.y){
+            q.y = entity->_position.y;
+        } else if (_position.y > entity->_position.y + entity->_size/2){
+            q.y = entity->_position.y + entity->_size/2;
         } else {
-            q.y = position.y;
+            q.y = _position.y;
         }
 
-        if(Vector2Distance(position, q) <= radius && !damaged){
+        if(Vector2Distance(_position, q) <= _radius && !_damaged){
             if(current_state == &dodging){
-                HP -= 0;
+                _healthPoints -= 0;
             } else if (current_state == &blocking){
-                HP -= (int) entity->damage/2;
+                _healthPoints -= (int) entity->_damage/2;
             } else {
-                HP -= (int) entity->damage;
+                _healthPoints -= (int) entity->_damage;
             }
-            damaged = true;
+            _damaged = true;
         }
     }
 }
 
-Player::Player(Vector2 pos, float rad, float spd, int hp): Entity(position, radius, /*size */ 0.0f,speed, healthPoints){
-    position = pos;
-    radius = rad;
-    speed = spd;
+//Player::Player(Vector2 pos, float rad, float spd, int hp)
+Player::Player(Vector2 pos, float rad, float spd, int hp){
+    //: Entity(_position, _radius, /*size */ 0.0f,speed, healthPoints)
+    _position = pos;
+    _radius = rad;
+    _speed = spd;
     SetState(&idle);
     timer = 0;
     invulnerabilityTimer = 0;
-    HP = hp;
-    hitboxPos = {pos.x + rad +25.0f, pos.y};
-    hitboxRad = rad/2;
-    damaged = false;
+    _healthPoints = hp;
+    hitboxPos = {_position.x + _radius +25.0f, _position.y};
+    hitboxRad = _radius/2;
+    _damaged = false;
 }
 
 
@@ -136,21 +138,21 @@ void PlayerIdle::Update(Player& player, float delta_time){
 void PlayerMoving::Update(Player& player, float delta_time){
     player.velocity = Vector2Zero();
     if(IsKeyDown(KEY_W)){
-        player.velocity = {0.0f, -1*player.speed};
+        player.velocity.y =  -1*player._speed;
     }
     if(IsKeyDown(KEY_A)){
-        player.velocity = { -1*player.speed, 0.0f};
+        player.velocity.x = -1*player._speed;
     }
     if(IsKeyDown(KEY_S)){
-        player.velocity = {0.0f, player.speed};
+        player.velocity.y =  player._speed;
     }
     if(IsKeyDown(KEY_D)){
-        player.velocity = {player.speed, 0.0f};
+        player.velocity.x = player._speed;
     }
     if(IsKeyPressed(KEY_SPACE)){
         player.SetState(&player.dodging);
     }
-    player.position = Vector2Add(player.position, Vector2Scale(player.velocity, delta_time));
+    player._position = Vector2Add(player._position, Vector2Scale(player.velocity, delta_time));
 
     if(IsMouseButtonDown(0)) {
         player.SetState(&player.attacking);
@@ -159,12 +161,12 @@ void PlayerMoving::Update(Player& player, float delta_time){
     if(Vector2Length(player.velocity) == 0) {
         player.SetState(&player.idle);
     } else {
-        player.hitboxPos = {player.position.x + player.velocity.x/player.speed*(player.radius + 25.0f), player.position.y + player.velocity.y/player.speed*(player.radius + 25.0f)};
+        player.hitboxPos = {player._position.x + player.velocity.x/player._speed*(player._radius + 25.0f), player._position.y + player.velocity.y/player._speed*(player._radius + 25.0f)};
     }
 }
 
 void PlayerDodging::Update(Player& player, float delta_time){
-    player.position = Vector2Add(player.position, Vector2Scale(Vector2Scale(player.velocity, delta_time), 10.0f));
+    player._position = Vector2Add(player._position, Vector2Scale(Vector2Scale(player.velocity, delta_time), 10.0f));
     player.timer += delta_time;
     if(player.timer > 0.125){
         player.timer = 0;

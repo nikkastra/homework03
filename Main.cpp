@@ -6,7 +6,7 @@
 
 #include "PlayerStateMachine.cpp"
 #include "EnemyStateMachine.cpp"
-#include "entity.cpp"
+#include "entity.hpp"
 
 const int WINDOW_WIDTH = 1280;
 const int WINDOW_HEIGHT = 720;
@@ -35,16 +35,16 @@ int main(){
     while(!WindowShouldClose()){
         float delta_time = GetFrameTime();
 
-        camera_view.target = player.position;
+        camera_view.target = player._position;
 
         player.Update(delta_time);
-        if(enemy1.HP > 0){
+        if(enemy1._healthPoints > 0){
             player.HandleCollision(&enemy1);
             enemy1.Update(delta_time);
             enemy1.HandleCollision(&player);
             enemy2.HandleEnemyCollision(&enemy1);
         }
-        if(enemy2.HP > 0){
+        if(enemy2._healthPoints > 0){
             player.HandleCollision(&enemy2);
             enemy2.Update(delta_time);
             enemy2.HandleCollision(&player);
@@ -55,16 +55,16 @@ int main(){
         ClearBackground(WHITE);
         BeginMode2D(camera_view);
         DrawTexture(joshHutcherson, 0, 0, WHITE);
-        if(enemy1.HP > 0){
+        if(enemy1._healthPoints > 0){
             enemy1.Draw();
         }
-        if(enemy2.HP > 0){
+        if(enemy2._healthPoints  > 0){
             enemy2.Draw();
         }
         player.Draw();
         EndMode2D();
         char buffer[10];
-        sprintf_s(buffer, "%.0i", player.HP);
+        sprintf_s(buffer, "%.0i", player._healthPoints);
         DrawText(buffer, 10, 10, 100, BLACK);
         EndDrawing();
     }

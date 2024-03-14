@@ -47,22 +47,17 @@ public:
 
 class Player : public Entity{
 public:
-    Vector2 position;
-    float radius;
+    
     Color color;
 
     Vector2 hitboxPos;
     float hitboxRad;
 
     Vector2 velocity;
-    float speed;
-
     float timer;
     float invulnerabilityTimer;
     float powerUpTimer;
-    int HP;
-    bool damaged;
-
+    
     PlayerIdle idle;
     PlayerMoving moving;
     PlayerDodging dodging;
@@ -70,6 +65,7 @@ public:
     PlayerBlocking blocking;
 
     Player(Vector2 pos, float rad, float spd, int hp);
+    Player();
 
     void Update(float delta_time);
     

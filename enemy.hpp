@@ -49,14 +49,11 @@ public:
 
 class Enemy: public Entity{
 public:
-    Player* player;
+    //Player* player;
 
-    Vector2 position;
-    float size;
     Color color;
 
     Vector2 velocity;
-    float speed;
     float rotation;
 
     Vector2 bodyCenter;
@@ -67,12 +64,11 @@ public:
     bool nearOtherEnemy;
 
     float timer;
-    int HP;
-    bool damaged;
+    //bool damaged;
 
     //target player
     Vector2 targetPos;
-    float damage;
+    //float damage;
 
     EnemyWandering wandering;
     EnemyChasing chasing;
