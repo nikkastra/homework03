@@ -20,11 +20,12 @@ int main(){
     Player player({WINDOW_WIDTH/2, WINDOW_HEIGHT/2}, 50.0f, 200.0f, 5); // for player Player(Vector2 pos, float rad, float spd, int hp);
     Enemy enemy1({WINDOW_WIDTH/8, WINDOW_HEIGHT/8}, 100.0f, 100.0f, 2); // for enemy Vector2 pos, float sz, float spd, int hp
     Enemy enemy2({7*WINDOW_WIDTH/8, 7*WINDOW_HEIGHT/8}, 100.0f, 100.0f, 2); 
-    Item item1 ({WINDOW_WIDTH/3, WINDOW_HEIGHT/3 + 200}, 31,2,1);
-    Item item2 ({WINDOW_WIDTH/9, WINDOW_HEIGHT/9 + 200}, 31,2,1);
-    Item item3 ({WINDOW_WIDTH/9, WINDOW_HEIGHT/2 + 200}, 31,2,1);
-    Item item4 ({WINDOW_WIDTH/2, WINDOW_HEIGHT + 200}, 31,2,1);
-    Item item5 ({7*WINDOW_WIDTH/9, 7*WINDOW_HEIGHT/8 + 200}, 31,2,1);
+
+    Item item1 ({0, 0}, 31,2,1);
+    Item item2 ({WINDOW_WIDTH/2 + 400, WINDOW_HEIGHT/9 + 200}, 31,2,1);
+    Item item3 ({WINDOW_WIDTH/9 + 150, WINDOW_HEIGHT/2 + 200}, 31,2,1);
+    Item item4 ({WINDOW_WIDTH/2 + 1000, WINDOW_HEIGHT + 200}, 31,2,1);
+    Item item5 ({WINDOW_WIDTH, WINDOW_HEIGHT}, 31,2,1);
 
 
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "miss ko na siya");

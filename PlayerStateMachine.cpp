@@ -16,6 +16,17 @@ void Player::Update(float delta_time){
             invulnerabilityTimer = 0;
         }
     }
+
+    // for the speed buff
+    if(_buffed){
+        _buffTimer += delta_time;
+        if(_buffTimer  > 5.0f){
+            _buffed = false;
+            _buffTimer = 0.0f;
+            _speedMultiplier = 1.0f;
+        }
+    }
+
     current_state->Update(*this, delta_time);
 }
 
@@ -90,17 +101,24 @@ void Player::HandleCollision(Entity* entity){
 
 //Player::Player(Vector2 pos, float rad, float spd, int hp)
 Player::Player(Vector2 pos, float rad, float spd, int hp){
-    //: Entity(_position, _radius, /*size */ 0.0f,speed, healthPoints)
+    // Entity Based Variables
     _position = pos;
     _radius = rad;
     _speed = spd;
-    SetState(&idle);
+    _buffTimer = 0;
+    _speedMultiplier = 1.0f;
+    _buffed = false;
+    _damaged = false;
+    _healthPoints = hp;
+    
+    // Player Based Variables
     timer = 0;
     invulnerabilityTimer = 0;
-    _healthPoints = hp;
     hitboxPos = {_position.x + _radius +25.0f, _position.y};
     hitboxRad = _radius/2;
-    _damaged = false;
+
+    SetState(&idle);
+    
 }
 
 
@@ -139,16 +157,16 @@ void PlayerIdle::Update(Player& player, float delta_time){
 void PlayerMoving::Update(Player& player, float delta_time){
     player.velocity = Vector2Zero();
     if(IsKeyDown(KEY_W)){
-        player.velocity.y =  -1*player._speed;
+        player.velocity.y =  -1*(player._speed * player._speedMultiplier);
     }
     if(IsKeyDown(KEY_A)){
-        player.velocity.x = -1*player._speed;
+        player.velocity.x = -1*(player._speed * player._speedMultiplier);
     }
     if(IsKeyDown(KEY_S)){
-        player.velocity.y =  player._speed;
+        player.velocity.y =  (player._speed * player._speedMultiplier);
     }
     if(IsKeyDown(KEY_D)){
-        player.velocity.x = player._speed;
+        player.velocity.x = (player._speed * player._speedMultiplier);
     }
     if(IsKeyPressed(KEY_SPACE)){
         player.SetState(&player.dodging);
@@ -162,7 +180,7 @@ void PlayerMoving::Update(Player& player, float delta_time){
     if(Vector2Length(player.velocity) == 0) {
         player.SetState(&player.idle);
     } else {
-        player.hitboxPos = {player._position.x + player.velocity.x/player._speed*(player._radius + 25.0f), player._position.y + player.velocity.y/player._speed*(player._radius + 25.0f)};
+        player.hitboxPos = {player._position.x + player.velocity.x/(player._speed * player._speedMultiplier)*(player._radius + 25.0f), player._position.y + player.velocity.y/player._speed*(player._radius + 25.0f)};
     }
 }
 

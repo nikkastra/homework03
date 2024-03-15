@@ -15,6 +15,17 @@ void Enemy::Update(float delta_time){
     if(velocity.y < 0){
         rotation *= -1;
     }
+
+    // for the speed buff
+    if(_buffed){
+        _buffTimer += delta_time;
+        if(_buffTimer  > 5.0f){
+            _buffed = false;
+            _buffTimer = 0.0f;
+            _speedMultiplier = 1.0f;
+        }
+    }
+
 }
 
 void Enemy::Draw(){
@@ -55,24 +66,33 @@ void Enemy::HandleEnemyCollision(Enemy* enemy){
     }
 }
 
-Enemy::Enemy(Vector2 pos, float sz, float spd, int hp){ //: Entity(_position, /*radius */ 0.0f, _size ,_speed, healthPoints)
+Enemy::Enemy(Vector2 pos, float sz, float spd, int hp){ 
+    // Entity Based Variables
     _position = pos;
     _size = sz;
     _speed = spd;
-    SetState(&wandering);
-    timer = 0;
     _healthPoints = hp;
+    _buffTimer = 0;
+    _speedMultiplier = 1.0f;
+    _buffed = false;
+    _damaged = false;
+    _damage = 2;
+
+    // Enemy Based Variables
+    timer = 0;
     bodyCenter = {pos.x, pos.y};
     aggroRange = 3*sz + 50;
     detectionRange = 2*sz + 50;
     attackRange = sz + 50;
-    _damaged = false;
-    _damage = 2;
+
+
+    SetState(&wandering);
+    
 }
 
 void EnemyWandering::Enter(Enemy& enemy){
     enemy.color = PINK;
-    enemy.velocity = {enemy._speed*GetRandomValue(-100, 100)/100, enemy._speed*GetRandomValue(-100, 100)/100};
+    enemy.velocity = {(enemy._speed * enemy._speedMultiplier)*GetRandomValue(-100, 100)/100, (enemy._speed * enemy._speedMultiplier)*GetRandomValue(-100, 100)/100};
 }
 
 void EnemyWandering::Update(Enemy& enemy, float delta_time){
@@ -81,13 +101,13 @@ void EnemyWandering::Update(Enemy& enemy, float delta_time){
     enemy.timer += delta_time;
     if(enemy.timer > 1){
         enemy.timer = 0;
-        enemy.velocity = {enemy._speed*GetRandomValue(-100, 100)/100, enemy._speed*GetRandomValue(-100, 100)/100};
+        enemy.velocity = {(enemy._speed * enemy._speedMultiplier)*GetRandomValue(-100, 100)/100, (enemy._speed * enemy._speedMultiplier)*GetRandomValue(-100, 100)/100};
     }
 }
 
 void EnemyChasing::Enter(Enemy& enemy){
     enemy.color = RED;
-    enemy.velocity = Vector2Scale(Vector2Normalize(Vector2Subtract(enemy.targetPos, enemy.bodyCenter)), enemy._speed);
+    enemy.velocity = Vector2Scale(Vector2Normalize(Vector2Subtract(enemy.targetPos, enemy.bodyCenter)), (enemy._speed * enemy._speedMultiplier));
 }
 
 void EnemyChasing::Update(Enemy& enemy, float delta_time){
@@ -100,7 +120,7 @@ void EnemyReadyingAttack::Enter(Enemy& enemy){
 }
 
 void EnemyReadyingAttack::Update(Enemy& enemy, float delta_time){
-    enemy.velocity = Vector2Scale(Vector2Normalize(Vector2Subtract(enemy.targetPos, enemy.bodyCenter)), enemy._speed);
+    enemy.velocity = Vector2Scale(Vector2Normalize(Vector2Subtract(enemy.targetPos, enemy.bodyCenter)), (enemy._speed * enemy._speedMultiplier));
     enemy.timer += delta_time;
     if(enemy.timer > 1){
         enemy.timer = 0;

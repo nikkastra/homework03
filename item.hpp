@@ -21,10 +21,7 @@ class ItemIdle: public ItemState{
     void Update(Item& item, float delta_time);
 };
 
-class ItemBuffDecay: public ItemState{
-    void Enter(Item& item);
-    void Update(Item& item,  float delta_time);
-};
+
 
 
 class Item : public Entity{
@@ -33,11 +30,9 @@ public:
     Color color;
     float timer;
     float speedBuff;
-
-    ItemIdle idle;
-    ItemBuffDecay buffDecay;
     
-
+    ItemIdle idle;
+    
     Item(Vector2 pos, float sz, float spdBuff, int hp);
     
 

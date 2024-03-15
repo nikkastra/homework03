@@ -7,9 +7,6 @@
 #include "entity.hpp"
 
 class Entity; 
-float originalSpeed;
-Entity* collided;
-
 
 void Item::Update(float delta_time){
     current_state->Update(*this, delta_time);
@@ -28,8 +25,7 @@ void Item::SetState(ItemState* new_state){
 
 void Item::HandleCollision(Entity* entity,  float delta_time){ // need delta_time for a timer
     Vector2 q;
-    originalSpeed = entity -> _speed;
-
+    
     // for player - circle shaped
     if(_position.x < entity->_position.x){
         q.x = entity->_position.x;
@@ -48,45 +44,41 @@ void Item::HandleCollision(Entity* entity,  float delta_time){ // need delta_tim
     }
 
     if(Vector2Distance(_position, q) <= entity -> _radius){
-        entity -> _speed = originalSpeed * speedBuff;
+        entity->_buffed = true;
+        entity->_speedMultiplier = speedBuff;
         _healthPoints -= 1;
-        collided = entity;
-        SetState(&buffDecay);
+        return;
     }
 
     //for enemy - square shaped
+    if(CheckCollisionRecs({_position.x, _position.y, _size, _size},{entity->_position.x, entity->_position.y,entity->_size,entity->_size}))
+    {
+        entity->_buffed = true;
+        entity->_speedMultiplier = speedBuff;
+        _healthPoints -= 1;
+        return;
+    }
 }
 
 
 Item::Item(Vector2 pos, float sz, float spdBuff, int hp){
+    // entity based variables 
     _position = pos;
     _size = sz;
     _healthPoints = hp;
+
+    // item based variables
     speedBuff = spdBuff;
     color = BLUE;
+    timer = 0;
+    
     SetState(&idle);
     
 }
-
 
 void ItemIdle::Enter(Item& item){
     item.color = BLUE;
 }
 
-void ItemIdle::Update(Item& item, float delta_time){
-    //lmao do nothing
-}
+void ItemIdle::Update(Item& item, float delta_time){}
 
-void ItemBuffDecay::Enter(Item& item){
-    
-}
-
-void ItemBuffDecay::Update(Item& item, float delta_time){
-    item.timer += delta_time;
-    if(item.timer > 0.5f)
-    {
-        item.timer = 0;
-        collided -> _speed = originalSpeed;
-        item.SetState(&item.idle);
-    }
-}
