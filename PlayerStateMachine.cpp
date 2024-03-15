@@ -24,6 +24,7 @@ void Player::Draw(){
     if(current_state == &attacking){
         DrawCircleV(hitboxPos, hitboxRad, color);
     }
+
 }
 
 void Player::SetState(PlayerState* new_state){

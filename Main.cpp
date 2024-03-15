@@ -6,7 +6,7 @@
 
 #include "PlayerStateMachine.cpp"
 #include "EnemyStateMachine.cpp"
-#include "entity.hpp"
+#include "ItemStateMachine.cpp"
 
 const int WINDOW_WIDTH = 1280;
 const int WINDOW_HEIGHT = 720;
@@ -20,6 +20,7 @@ int main(){
     Player player({WINDOW_WIDTH/2, WINDOW_HEIGHT/2}, 50.0f, 200.0f, 5); // for player Player(Vector2 pos, float rad, float spd, int hp);
     Enemy enemy1({WINDOW_WIDTH/8, WINDOW_HEIGHT/8}, 100.0f, 100.0f, 2); // for enemy Vector2 pos, float sz, float spd, int hp
     Enemy enemy2({7*WINDOW_WIDTH/8, 7*WINDOW_HEIGHT/8}, 100.0f, 100.0f, 2); 
+    Item item1 ({WINDOW_WIDTH/3, WINDOW_HEIGHT/3 + 200}, 31,2,1);
 
 
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "miss ko na siya");
@@ -51,21 +52,41 @@ int main(){
             enemy1.HandleEnemyCollision(&enemy2);
         }
 
+        if(item1._healthPoints > 0)
+        {
+            item1.HandleCollision(&player, delta_time); // detecting collisions with the player
+            item1.Update(delta_time);
+        }
+
         BeginDrawing();
         ClearBackground(WHITE);
         BeginMode2D(camera_view);
         DrawTexture(joshHutcherson, 0, 0, WHITE);
-        if(enemy1._healthPoints > 0){
-            enemy1.Draw();
-        }
-        if(enemy2._healthPoints  > 0){
-            enemy2.Draw();
-        }
-        player.Draw();
+        
+        if(enemy1._healthPoints > 0 ) enemy1.Draw();
+        if(enemy2._healthPoints  > 0) enemy2.Draw();
+        
+        if(item1._healthPoints > 0) item1.Draw();
+
+        if(player._healthPoints > 0) player.Draw();
+
+        //lose condition
         EndMode2D();
         char buffer[10];
         sprintf_s(buffer, "%.0i", player._healthPoints);
         DrawText(buffer, 10, 10, 100, BLACK);
+        // win condition
+        if(enemy1._healthPoints <= 0 && enemy2._healthPoints <=0)
+        {
+            DrawRectangle(0,0,WINDOW_WIDTH,WINDOW_HEIGHT,GRAY);
+            DrawText("You Win!", (WINDOW_WIDTH/2) - 175,(WINDOW_HEIGHT/2) - 50,100,GREEN);
+        }
+
+        if(player._healthPoints <= 0)
+        {
+            DrawRectangle(0,0,WINDOW_WIDTH,WINDOW_HEIGHT,GRAY);
+            DrawText("You Lose!", (WINDOW_WIDTH/2) - 175,(WINDOW_HEIGHT/2) - 50,100,RED);
+        }
         EndDrawing();
     }
     CloseWindow();
