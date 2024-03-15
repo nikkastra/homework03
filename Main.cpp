@@ -21,6 +21,10 @@ int main(){
     Enemy enemy1({WINDOW_WIDTH/8, WINDOW_HEIGHT/8}, 100.0f, 100.0f, 2); // for enemy Vector2 pos, float sz, float spd, int hp
     Enemy enemy2({7*WINDOW_WIDTH/8, 7*WINDOW_HEIGHT/8}, 100.0f, 100.0f, 2); 
     Item item1 ({WINDOW_WIDTH/3, WINDOW_HEIGHT/3 + 200}, 31,2,1);
+    Item item2 ({WINDOW_WIDTH/9, WINDOW_HEIGHT/9 + 200}, 31,2,1);
+    Item item3 ({WINDOW_WIDTH/9, WINDOW_HEIGHT/2 + 200}, 31,2,1);
+    Item item4 ({WINDOW_WIDTH/2, WINDOW_HEIGHT + 200}, 31,2,1);
+    Item item5 ({7*WINDOW_WIDTH/9, 7*WINDOW_HEIGHT/8 + 200}, 31,2,1);
 
 
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "miss ko na siya");
@@ -55,7 +59,41 @@ int main(){
         if(item1._healthPoints > 0)
         {
             item1.HandleCollision(&player, delta_time); // detecting collisions with the player
+            item1.HandleCollision(&enemy1, delta_time);
+            item1.HandleCollision(&enemy2, delta_time);
             item1.Update(delta_time);
+        }
+
+        if(item2._healthPoints > 0)
+        {
+            item2.HandleCollision(&player, delta_time); // detecting collisions with the player
+            item2.HandleCollision(&enemy1, delta_time);
+            item2.HandleCollision(&enemy2, delta_time);
+            item2.Update(delta_time);
+        }
+
+        if(item3._healthPoints > 0)
+        {
+            item3.HandleCollision(&player, delta_time); // detecting collisions with the player
+            item3.HandleCollision(&enemy1, delta_time);
+            item3.HandleCollision(&enemy2, delta_time);
+            item3.Update(delta_time);
+        }
+
+        if(item4._healthPoints > 0)
+        {
+            item4.HandleCollision(&player, delta_time); // detecting collisions with the player
+            item4.HandleCollision(&enemy1, delta_time);
+            item4.HandleCollision(&enemy2, delta_time);
+            item4.Update(delta_time);
+        }
+
+        if(item5._healthPoints > 0)
+        {
+            item5.HandleCollision(&player, delta_time); // detecting collisions with the player
+            item5.HandleCollision(&enemy1, delta_time);
+            item5.HandleCollision(&enemy2, delta_time);
+            item5.Update(delta_time);
         }
 
         BeginDrawing();
@@ -67,6 +105,10 @@ int main(){
         if(enemy2._healthPoints  > 0) enemy2.Draw();
         
         if(item1._healthPoints > 0) item1.Draw();
+        if(item2._healthPoints > 0) item2.Draw();
+        if(item3._healthPoints > 0) item3.Draw();
+        if(item4._healthPoints > 0) item4.Draw();
+        if(item5._healthPoints > 0) item5.Draw();
 
         if(player._healthPoints > 0) player.Draw();
 
